@@ -1,20 +1,36 @@
 #!/usr/bin/node
-const util = require('util');
-const request = util.promisify(require('request'));
-const filmID = process.argv[2];
+const request = require('request');
 
-async function starwarsCharacters (filmId) {
-  const endpoint = 'https://swapi-api.hbtn.io/api/films/' + filmId;
-  let response = await (await request(endpoint)).body;
-  response = JSON.parse(response);
-  const characters = response.characters;
+const filmId = process.argv[2];
 
-  for (let i = 0; i < characters.length; i++) {
-    const urlCharacter = characters[i];
-    let character = await (await request(urlCharacter)).body;
-    character = JSON.parse(character);
-    console.log(character.name);
-  }
+const url = 'https://swapi-api.hbtn.io/api/films/' + filmId + '/';
+
+function printMovieCharacters (url) {
+  request(url, async function (error, response, body) {
+    if (error) return console.log('An error occurred');
+
+    const characters = JSON.parse(body).characters;
+    if (!characters) return;
+
+    const promises = [];
+
+    for (const ch of characters) {
+      let promise = null;
+
+      promise = new Promise(function (resolve, reject) {
+        request(ch, function (error, response, body) {
+          if (error) return console.log('Error fetching character');
+          resolve(JSON.parse(body).name);
+        });
+      });
+      promises.push(promise);
+    }
+
+    const data = await Promise.all(promises);
+    for (const item of data) {
+      console.log(item);
+    }
+  });
 }
 
-starwarsCharacters(filmID);
+printMovieCharacters(url);
