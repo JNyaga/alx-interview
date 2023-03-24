@@ -5,33 +5,26 @@ Module 0-making_change
 
 
 def makeChange(coins, total):
+    """
+    Given a pile of coins of different values,
+    determine the fewest number of coins needed
+    to meet a given amount total.
+
+    Dyanimc Programmming Bottom Up Solution
+    """
     if total <= 0:
         return 0
-    if best_sum(total, coins, {}) is None:
-        return -1
-    return len(best_sum(total, coins, {}))
+    # initialize list with maximum amount(which cannot be reached)
+    # this helps to calculate a new minimum
+    # e.g if total = 2, list = [3,3,3]
+    dp = [total + 1] * (total + 1)
+    # set minimum number of coins for amount 0
+    dp[0] = 0
 
-
-def best_sum(target_sum, numbers, memo={}):
-    # check if target sum already exists in memoization dictionary
-    if target_sum in memo:
-        return memo[target_sum]
-    # base cases
-    if target_sum == 0:
-        return []
-    if target_sum < 0:
-        return None
-
-    shortest_combination = None
-    # iterate through numbers and recursively call function to find remainder combinations
-    for num in numbers:
-        remainder = target_sum - num
-        remainder_combination = best_sum(remainder, numbers, memo)
-        if remainder_combination is not None:
-            combination = [*remainder_combination, num]
-            # if combination is shorter than the current shortest, update it
-            if shortest_combination is None or len(combination) < len(shortest_combination):
-                shortest_combination = combination
-
-    memo[target_sum] = shortest_combination
-    return shortest_combination
+    # start from 1 because we know dp[0]
+    for amount in range(1, total + 1):
+        # test for every coin
+        for coin in coins:
+            if amount - coin >= 0:
+                dp[amount] = min(dp[amount], 1 + dp[amount - coin])
+    return dp[total] if dp[total] != total + 1 else -1
