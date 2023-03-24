@@ -5,6 +5,10 @@ Module 0-making_change
 
 
 def makeChange(coins, total):
+    if total == 0:
+        return 0
+    if best_sum(total, coins) is None:
+        return -1
     return len(best_sum(total, coins))
 
 
@@ -24,7 +28,7 @@ def best_sum(target_sum, numbers, memo={}):
         remainder = target_sum - num
         remainder_combination = best_sum(remainder, numbers, memo)
         if remainder_combination is not None:
-            combination = remainder_combination + [num]
+            combination = [*remainder_combination, num]
             # if combination is shorter than the current shortest, update it
             if shortest_combination is None or len(combination) < len(shortest_combination):
                 shortest_combination = combination
