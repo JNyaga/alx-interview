@@ -5,7 +5,7 @@ Module 0-making_change
 
 
 def makeChange(coins, total):
-    if total == 0:
+    if total <= 0:
         return 0
     if best_sum(total, coins, {}) is None:
         return -1
