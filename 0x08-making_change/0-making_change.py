@@ -7,9 +7,9 @@ Module 0-making_change
 def makeChange(coins, total):
     if total == 0:
         return 0
-    if best_sum(total, coins) is None:
+    if best_sum(total, coins, {}) is None:
         return -1
-    return len(best_sum(total, coins))
+    return len(best_sum(total, coins, {}))
 
 
 def best_sum(target_sum, numbers, memo={}):
