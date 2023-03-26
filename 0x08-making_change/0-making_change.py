@@ -14,16 +14,17 @@ def makeChange(coins, total):
     """
     if total <= 0:
         return 0
-    
-    table = [None] * (total + 1)
-    table[0] = []
+    # initialize list with maximum amount(which cannot be reached)
+    # this helps to calculate a new minimum
+    # e.g if total = 2, list = [3,3,3]
+    dp = [total + 1] * (total + 1)
+    # set minimum number of coins for amount 0
+    dp[0] = 0
 
-    for i in range(total+1):
-        if table[i] is not None:
-            for num in coins:
-                combination = [*table[i] ,num]
-                if(i+num<= total):
-                    if (table[i + num] ==None or len(table[i + num]) > len(combination)):
-                        table[i + num] = combination
-
-    return len(table[total]) if table[total] is not None else -1
+    # start from 1 because we know dp[0]
+    for amount in range(1, total + 1):
+        # test for every coin
+        for coin in coins:
+            if amount - coin >= 0:
+                dp[amount] = min(dp[amount], 1 + dp[amount - coin])
+    return dp[total] if dp[total] != total + 1 else -1
